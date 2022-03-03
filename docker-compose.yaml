@@ -1,0 +1,28 @@
+ version: '3.1'
+
+ services:
+  registry:
+    image: registry:2
+    container_name: registry
+    restart: always
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:5000
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM="Registry Realm"
+#      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/registry.password
+    ports:
+      - "5000:5000"
+    volumes:
+      - /var/images:/var/lib/registry
+      - ./auth:/auth
+
+  adduser:
+    image: httpd:2
+    container_name: htpasswd
+#    entrypoint: 
+#      - htpasswd
+    command: ["htpasswd", "-Bc"]
+    working_dir: "/auth"
+    volumes:
+      - ./auth:/auth    
